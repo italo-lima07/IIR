@@ -1,0 +1,21 @@
+Grupo: Israel David da Costa Silva; Italo Lima Ferreira e Pedro Renato dos Anjos.
+
+Meu nome é Israel. Fiquei responsável pela produção das animações, tanto como os áudios (sendo que os aúdios foram em conjunto com o resto dos integrantes do meu grupo).
+Fiz as ilustrações das partes do corpo de Ayana separadas no Clip Studio. Exportei em PSD, para que o senhor possa dar uma olhada, caso seja necessário. Utilizei um programa
+chamado Spine2D, que é bastante parecido com Dragon Bones. Utilizei Spine2D justamente por que roda mais leve em minha máquina em comparação com o Dragon Bones.
+
+Descrição de todos os áudios, e de como foram utilizados, tanto como sua origem.
+(Ressaltando que utilizei meu celular para gravar tudo).
+
+coletadeitem.aup3: utilizei o arquivo vidru.mp3, cujo gravei pegando cacos de vidro que haviam próximo de minha casa e batendo um contra o outro. Capturei os áudios e recortei, utilizei vários recursos como alteração de tempo 
+e velocidade para alcançar o resultado final que eu procurava de som de coleta.
+
+ataque.aup3: utilizei o arquivo de nome brucelee.mp3, cujo gravei no mesmo estilo do de cima, entretanto com sopros e eu mesmo tentando reproduzir golpes, para que saísse o som dos ataques. Coloquei uma meia no meu celular para 
+reduzir os ruídos, e utilizei alguma funções de redução de ruído do Audacity como de outros programas também.
+
+pulando.aup3: também utilizei o brucelee.mp3, só que usando partes diferentes de recortes que fiz do mesmo aúdio, e alterando tempo e velocidade, tudo no Audacity.
+
+correndo.aup3: utilizei o runnn.mp3, do mesmo jeito que os anteriores, utilizando recursos como alteração de tempo, velocidade e redução de ruído.
+
+bgmusic.aup3: utilizei batidinha.mp3 e outrabatidinha.mp3. Recordei de forma amadora em minha casa, e utilizei diversos softwares de produção de música, como FL Studio e até mesmo alguns programas de Drumpad para celular. Também
+utilizei sites recomendados pelo professor.
