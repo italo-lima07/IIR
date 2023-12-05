@@ -275,7 +275,7 @@ public class Player : MonoBehaviour
                     RIG.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
                     //DoubleJump = true;
                     IsJumPing = true;
-                    //SomPulo.Play();
+                    SomPulo.Play();
                 }
                 /*else
                 {
@@ -301,6 +301,7 @@ public class Player : MonoBehaviour
             {
                 isfire = true;
                 AN.SetInteger("transition", 3);
+                SomAtack.Play();
                 
                 yield return new WaitForSeconds(0.1f);
                 isfire = false;
