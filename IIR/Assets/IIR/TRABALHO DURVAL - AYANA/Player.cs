@@ -297,17 +297,16 @@ public class Player : MonoBehaviour
     
         IEnumerator ATA()
         {
-            if (canFire && Input.GetKeyDown(KeyCode.B))
+            if (Input.GetKeyDown(KeyCode.B))
             {
-                canFire = false;
                 isfire = true;
                 AN.SetInteger("transition", 3);
                 
-                yield return new WaitForSeconds(0.9f);
+                yield return new WaitForSeconds(0.1f);
                 isfire = false;
                 AN.SetInteger("transition", 0);
                 
-                //yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.3f);
                 canFire = true;
             }
         }
