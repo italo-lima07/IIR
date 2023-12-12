@@ -32,9 +32,6 @@ public class Player : MonoBehaviour
         private float dashCooldownTimer = 0f;
         private bool canDash = true;
         
-        
-        //public Text dashCooldownText;
-        //public Text shieldCooldownText;
     
         
         private float shieldDuration = 3.0f;
@@ -71,51 +68,16 @@ public class Player : MonoBehaviour
         // Update is called once per frame
         void Update()
         {
-            Jump();
-    
             if (!isDashing)
             {
-                Move();
-                AT();
-                //Dash();
-                
-                if (Input.GetKeyDown(KeyCode.F))
+                if (!isfire)
                 {
-                    ToggleShield(); 
+                    AT();
                 }
+
+                Jump();
+                Move();
             }
-            
-            /*if (isDashActive)
-            {
-                dashCooldownText.text = "TP Ativo";
-            }
-            else if (Time.time - lastDashTime < dashCooldown)
-            {
-                float remainingDashCooldown = dashCooldown - (Time.time - lastDashTime);
-                dashCooldownText.text = "TP em: " + remainingDashCooldown.ToString("F1");
-            }
-            else
-            {
-                dashCooldownText.text = "TP Pronto";
-            }
-            
-            
-            if (isShieldActive)
-            {
-                shieldCooldownText.text = "Escudo Ativado";
-            }
-            else if (Time.time - lastShieldActivationTime < shieldCooldown)
-            {
-                float remainingShieldCooldown = shieldCooldown - (Time.time - lastShieldActivationTime);
-                shieldCooldownText.text = "Escudo em: " + remainingShieldCooldown.ToString("F1");
-            }
-            else
-            {
-                shieldCooldownText.text = "Escudo Pronto";
-            }
-            
-            float fillAmount = (float)health / maxHealth;
-            healthBar.fillAmount = fillAmount;*/
             
         }
         
@@ -165,157 +127,78 @@ public class Player : MonoBehaviour
         {
             Move();
         }
-    
-        /*void Dash()
-        {      
-            if (!canDash)
-            {
-                return; 
-            }
-            if (isDashActive || Time.time - lastDashTime < dashCooldown)
-            {
-                return; 
-            }
-    
-            if (stage2 == true)
-            {
-                if (Input.GetKeyDown(KeyCode.V)) 
-                {
-                    PerformDash(Vector2.right);
-                }
-                else if (Input.GetKeyDown(KeyCode.Z)) 
-                {
-                    PerformDash(Vector2.left);
-                }
-                else if (Input.GetKeyDown(KeyCode.X)) 
-                {
-                    PerformDash(Vector2.up);
-                }
-                else if (Input.GetKeyDown(KeyCode.C)) 
-                {
-                    PerformDash(Vector2.down);
-                }
-            }
-            
-        }
         
-        void PerformDash(Vector2 dashDirection)
-        {      
-            
-            dashParticles.Play();
-    
-            if (isDashActive || Time.time - lastDashTime < dashCooldown)
-            {
-                return; 
-            }
-    
-            isDashing = true;
-            isInvulnerable = true;
-            isDashActive = true;
-    
-            Vector2 dashPosition = (Vector2)transform.position + dashDirection.normalized * dashDistance;
-            
-            RIG.MovePosition(dashPosition);
-            StartCoroutine(StopDash());     
-            
-            lastDashTime = Time.time; 
-        }
-        
-        IEnumerator StopDash()
-        {
-            yield return new WaitForSeconds(dashDuration);
-            isDashing = false;
-            isInvulnerable = false;
-            isDashActive = false;
-            
-            dashParticles.Stop();
-    
-            canDash = false; 
-    
-            yield return new WaitForSeconds(dashCooldown); 
-    
-            canDash = true; 
-        }*/
         
         void Move()
         {
             M = Input.GetAxis("Horizontal");
             if (!isDashing) 
             {
+                if (M != 0 && !IsJumPing) 
+                {
+                    if (!SomR.isPlaying) 
+                    {
+                        SomR.Play();
+                    }
+                } 
+                else 
+                {
+                    SomR.Stop();
+                    AN.SetInteger("transition", 0); // Define a animação padrão quando não está se movendo
+                }
+
                 RIG.velocity = new Vector2(M * speed, RIG.velocity.y);
+
                 if (M > 0)
                 {
-                    if (!IsJumPing)
-                    {
-                        AN.SetInteger("transition", 1);
-                    }
                     transform.eulerAngles = new Vector3(0, 180, 0);
+                    AN.SetInteger("transition", 1);
                 }
-                if (M < 0)
+                else if (M < 0)
                 {
-                    if (!IsJumPing)
-                    {
-                        AN.SetInteger("transition", 1);
-                    }
                     transform.eulerAngles = new Vector3(0, 0, 0);
-                }
-                if (M == 0 && !IsJumPing && !isfire)
-                {
-                    AN.SetInteger("transition", 0);
+                    AN.SetInteger("transition", 1);
                 }
             }
         }
         void Jump()
         {
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") && !IsJumPing)
             {
-                if (!IsJumPing)
-                {
-                    AN.SetInteger("transition", 2);
-                    RIG.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-                    //DoubleJump = true;
-                    IsJumPing = true;
-                    SomPulo.Play();
-                }
-                /*else
-                {
-                    if (DoubleJump)
-                    {
-                        AN.SetInteger("transition", 2);
-                        RIG.AddForce(new Vector2(0, jumpForce * 1), ForceMode2D.Impulse);
-                        DoubleJump = false;
-                        SomPulo.Play();
-                    }
-                }*/
+                AN.SetInteger("transition", 2); // Define a animação de pulo
+                RIG.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+                IsJumPing = true;
+                SomPulo.Play();
             }
+            
         }
     
         void AT()
         {
-            StartCoroutine("ATA");
-        }
-    
-        IEnumerator ATA()
-        {
-            if (Input.GetKeyDown(KeyCode.B))
+            if (Input.GetKeyDown(KeyCode.B) && !isfire)
             {
-                isfire = true;
-                AN.SetInteger("transition", 3);
-                SomAtack.Play();
-                
-                yield return new WaitForSeconds(0.1f);
-                isfire = false;
-                AN.SetInteger("transition", 0);
-                
-                yield return new WaitForSeconds(0.3f);
-                canFire = true;
+                StartCoroutine(AttackAnimation());
             }
         }
-    
+
+        IEnumerator AttackAnimation()
+        {
+            isfire = true;
+            AN.SetInteger("transition", 3);
+
+            yield return new WaitForSeconds(0.1f);
+
+            SomAtack.Play();
+
+            yield return new WaitForSeconds(0.2f); // Tempo da animação de ataque
+
+            isfire = false;
+            AN.SetInteger("transition", 0); // Define a animação padrão
+        }
+
         public void Damage(int DM)
         {
-            if (!isShieldActive && !isInvulnerable) // Verifique se o jogador não está invulnerável
-            {
+            
                 health -= DM;
                 AN.SetTrigger("hit");
                 
@@ -330,15 +213,11 @@ public class Player : MonoBehaviour
                 }
     
                 if (health <= 0)
-                {
-                    //GameController.instance.GameOver();
+                {   
                     Destroy(GameObject.FindGameObjectWithTag("Player"));
                     SomP.Stop();
-                    
                 }
                 
-                    
-            }
         }
 
 

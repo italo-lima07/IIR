@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,8 +6,12 @@ using UnityEngine;
 public class Coin : MonoBehaviour
 {
     public int scoreValue;
-    private AudioSource sound;
+    public AudioSource sound;
 
+    private void Start()
+    {
+        sound = GetComponent<AudioSource>();
+    }
 
     private void Update()
     {
@@ -15,11 +20,11 @@ public class Coin : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D CO)
     {
-        if (CO.gameObject.tag == "Player")
+        if (CO.gameObject.CompareTag("Player"))
         {
             sound.Play();
-            //gamecontroller.instance.UpdateScore(scoreValue);
-            Destroy(gameObject, 0.1f);
+            gamecontroller.instance.UpdateScore(scoreValue);
+            Destroy(gameObject, 0.2f);
         }
     }
 }
