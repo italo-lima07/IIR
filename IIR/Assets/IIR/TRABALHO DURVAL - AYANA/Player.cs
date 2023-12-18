@@ -1,231 +1,190 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-        public Image healthBar;
-        public int maxHealth = 100; 
-        public int health = 5;
-        public float speed;
-        private float M;
-        public float jumpForce;
-        private bool IsJumPing;
-        private bool DoubleJump;
-    
-        public ParticleSystem dashParticles;
-    
-        public AudioSource SomPulo;
-        public AudioSource SomAtack;
-        public AudioSource SomR;
-        public AudioSource SomP;
-    
-        private bool isDashing = false;
-        private bool isInvulnerable = false;
-        private float dashDuration = 0.5f; 
-        public float dashDistance = 2.0f; 
-        private float lastDashTime = -9999.0f; 
-        private float dashCooldown = 3.0f; 
-        private bool isDashActive = false;
-        private float dashCooldownTimer = 0f;
-        private bool canDash = true;
-        
-    
-        
-        private float shieldDuration = 3.0f;
-        private float shieldCooldown = 20.0f;
-        private float lastShieldActivationTime = -9999.0f; 
-        private bool isShieldActive = false;
-        private GameObject shieldObject;
-        public Sprite shieldSprite;
-        
-        
-        public GameObject power;
-        public Transform spawn;
-        private bool isfire;
-        private bool canFire = true;
-        
-        public bool stage2 = false;
-        public bool stage3 = false;
-        
-        private Rigidbody2D RIG;
-        private Animator AN;
-        
-        // Start is called before the first frame update
-        void Start()
-        {
-            RIG = GetComponent<Rigidbody2D>();
-    
-            AN = GetComponent<Animator>();
-            
-            shieldObject = null;
-            
-            health = maxHealth;
-        }
-    
-        // Update is called once per frame
-        void Update()
-        {
-            if (!isDashing)
-            {
-                if (!isfire)
-                {
-                    AT();
-                }
+    public Image healthBar;
+    public int maxHealth = 100;
+    public int health = 100;
+    public float speed;
+    public float jumpForce;
+    private bool IsJumPing;
+    private bool doubleJump;
 
-                Jump();
-                Move();
-            }
-            
-        }
-        
-        
-        void ToggleShield()
+    public ParticleSystem dashParticles;
+
+    public AudioSource SomPulo;
+    public AudioSource SomAtack;
+    public AudioSource SomR;
+    public AudioSource SomP;
+
+    private bool isDashing = false;
+    private bool isInvulnerable = false;
+    private float dashDuration = 0.5f;
+    public float dashDistance = 2.0f;
+    private float lastDashTime = -9999.0f;
+    private float dashCooldown = 3.0f;
+    private bool isDashActive = false;
+    private float dashCooldownTimer = 0f;
+    private bool canDash = true;
+
+    private bool isFiring;
+    private bool canFire = true;
+
+    private Rigidbody2D RIG;
+    private Animator AN;
+    private float M;
+    public Vector3 PosInicial;
+
+    void Start()
+    {
+        RIG = GetComponent<Rigidbody2D>();
+        AN = GetComponent<Animator>();
+        health = maxHealth;
+        PosInicial = transform.position;
+    }
+
+    void Update()
+    {
+        if (!isDashing)
         {
-            if (stage3 == true)
+            if (!isFiring)
             {
-                float currentTime = Time.time;
-    
-                if (!isShieldActive && (currentTime - lastShieldActivationTime >= shieldCooldown))
-                {
-                    
-                    shieldObject = new GameObject("Shield");
-                    SpriteRenderer spriteRenderer = shieldObject.AddComponent<SpriteRenderer>();
-                    spriteRenderer.sprite = shieldSprite;
-                    spriteRenderer.sortingOrder = 3;
-    
-                    
-                    Vector3 shieldPosition = transform.position;
-                    shieldPosition.y -= 0.2f; 
-                    shieldObject.transform.position = shieldPosition;
-    
-                    shieldObject.transform.parent = transform;
-                    isShieldActive = true;
-                    
-                    StartCoroutine(DeactivateShield());
-                    
-                    lastShieldActivationTime = currentTime;
-                }
-                else
-                {
-                    Destroy(shieldObject);
-                    isShieldActive = false;
-                }
+                Attack();
             }
-    
-            IEnumerator DeactivateShield()
-            {
-                yield return new WaitForSeconds(shieldDuration);
-                Destroy(shieldObject);
-                isShieldActive = false;
-            }
-        }
-    
-        private void FixedUpdate()
-        {
+
+            Jump();
             Move();
         }
-        
-        
-        void Move()
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
+    }
+
+    void Move()
+    {
+        M = Input.GetAxis("Horizontal");
+
+        RIG.velocity = new Vector2(M * speed, RIG.velocity.y);
+
+        if (M > 0)
         {
-            M = Input.GetAxis("Horizontal");
-            if (!isDashing) 
+            if (!IsJumPing)
             {
-                if (M != 0 && !IsJumPing) 
+                if (AN.GetInteger("transition") != 1)
                 {
-                    if (!SomR.isPlaying) 
-                    {
-                        SomR.Play();
-                    }
-                } 
-                else 
-                {
-                    SomR.Stop();
-                    AN.SetInteger("transition", 0); // Define a animação padrão quando não está se movendo
-                }
-
-                RIG.velocity = new Vector2(M * speed, RIG.velocity.y);
-
-                if (M > 0)
-                {
-                    transform.eulerAngles = new Vector3(0, 180, 0);
                     AN.SetInteger("transition", 1);
+                    SomR.Play();
                 }
-                else if (M < 0)
+            }
+            transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+    
+        if (M < 0)
+        {
+            if (!IsJumPing)
+            {
+                if (AN.GetInteger("transition") != 1)
                 {
-                    transform.eulerAngles = new Vector3(0, 0, 0);
                     AN.SetInteger("transition", 1);
+                    SomR.Play();
                 }
+            }
+            transform.eulerAngles = new Vector3(0, 0, 0);
+        }
+
+        if (M == 0 && !IsJumPing && !isFiring)
+        {
+            if (AN.GetInteger("transition") != 0)
+            {
+                AN.SetInteger("transition", 0);
+                SomR.Stop();
             }
         }
-        void Jump()
+    }
+
+
+
+    void Jump()
+    {
+        if (Input.GetButtonDown("Jump") && !IsJumPing)
         {
-            if (Input.GetButtonDown("Jump") && !IsJumPing)
-            {
-                AN.SetInteger("transition", 2); // Define a animação de pulo
-                RIG.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
-                IsJumPing = true;
-                SomPulo.Play();
-            }
+            AN.SetInteger("transition", 2); // Define a animação de pulo
+            RIG.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            IsJumPing = true;
+            SomPulo.Play();
+            
             
         }
-    
-        void AT()
+    }
+
+    void Attack()
+    {
+        if (Input.GetKeyDown(KeyCode.B) && !isFiring)
         {
-            if (Input.GetKeyDown(KeyCode.B) && !isfire)
-            {
-                StartCoroutine(AttackAnimation());
-            }
+            StartCoroutine(AttackAnimation());
+        }
+    }
+
+    IEnumerator AttackAnimation()
+    {
+        isFiring = true;
+        AN.SetInteger("transition", 3); // Definir a animação de ataque
+
+        yield return new WaitForSeconds(0.1f);
+
+        SomAtack.Play(); // Tocar som de ataque
+
+        yield return new WaitForSeconds(0.2f); // Tempo da animação de ataque
+        
+
+        isFiring = false;
+        AN.SetInteger("transition", 2); // Definir a animação padrão
+    }
+
+
+    public void Damage(int damageAmount)
+    {
+        health -= damageAmount;
+        AN.SetTrigger("hit");
+
+        if (transform.rotation.y == 0)
+        {
+            transform.position += new Vector3(-0.5f, 0, 0);
         }
 
-        IEnumerator AttackAnimation()
+        if (transform.rotation.y == 180)
         {
-            isfire = true;
-            AN.SetInteger("transition", 3);
-
-            yield return new WaitForSeconds(0.1f);
-
-            SomAtack.Play();
-
-            yield return new WaitForSeconds(0.2f); // Tempo da animação de ataque
-
-            isfire = false;
-            AN.SetInteger("transition", 0); // Define a animação padrão
+            transform.position += new Vector3(0.5f, 0, 0);
         }
 
-        public void Damage(int DM)
+        if (health <= 0)
         {
-            
-                health -= DM;
-                AN.SetTrigger("hit");
-                
-                if (transform.rotation.y == 0)
-                {
-                    transform.position += new Vector3(-0.5f, 0, 0);
-                }
-    
-                if (transform.rotation.y == 180)
-                {
-                    transform.position += new Vector3(0.5f, 0, 0);
-                }
-    
-                if (health <= 0)
-                {   
-                    Destroy(GameObject.FindGameObjectWithTag("Player"));
-                    SomP.Stop();
-                }
-                
+            Destroy(gameObject);
+            SomP.Stop();
         }
+    }
 
-
-        private void OnCollisionEnter2D(Collision2D CL)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 6)
         {
-            if (CL.gameObject.layer == 6)
-            {
-                IsJumPing = false;
-            }
+            IsJumPing = false;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D CL)
+    {
+        if (CL.gameObject.tag == "queda")
+        {
+            health -= 1;
+            //gamecontroller.instance.UpdateLives(health);
+            transform.position = PosInicial;
+        }
+    }
 }
