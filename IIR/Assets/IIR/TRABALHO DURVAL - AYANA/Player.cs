@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     private Animator AN;
     private float M;
     public Vector3 PosInicial;
+    public GameObject ataqueObject;
 
     void Start()
     {
@@ -140,15 +141,21 @@ public class Player : MonoBehaviour
 
         SomAtack.Play(); // Tocar som de ataque
 
-        yield return new WaitForSeconds(0.2f); // Tempo da animação de ataque
-        
+        // Ativar o objeto de ataque
+        yield return new WaitForSeconds(0.3f);
+        ataqueObject.SetActive(true);
+
+        yield return new WaitForSeconds(0.1f); // Tempo da animação de ataque
+
+        // Desativar o objeto de ataque
+        ataqueObject.SetActive(false);
 
         isFiring = false;
-        AN.SetInteger("transition", 2); // Definir a animação padrão
+        AN.SetInteger("transition", 7); 
     }
 
 
-    public void Damage(int damageAmount)
+    /*public void Damage(int damageAmount)
     {
         health -= damageAmount;
         AN.SetTrigger("hit");
@@ -168,7 +175,7 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
             SomP.Stop();
         }
-    }
+    }*/
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
