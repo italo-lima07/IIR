@@ -49,11 +49,6 @@ public class gamecontroller : MonoBehaviour
         PlayerPrefs.SetInt("score",score + totalScore);
     }
     
-    
-    public void UpdateLives(int value)
-    {
-        healthText.text = "x " + value.ToString();
-    }
 
     public void RestartGame()
     {

@@ -190,7 +190,6 @@ public class Player : MonoBehaviour
         if (CL.gameObject.tag == "queda")
         {
             health -= 1;
-            //gamecontroller.instance.UpdateLives(health);
             transform.position = PosInicial;
         }
     }
