@@ -24,7 +24,7 @@ public class Coin : MonoBehaviour
         {
             sound.Play();
             gamecontroller.instance.UpdateScore(scoreValue);
-            Destroy(gameObject, 0.1f);
+            Destroy(gameObject, 0.2f);
         }
     }
 }
